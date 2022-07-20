@@ -1,0 +1,70 @@
+{
+	"compiler": {
+		"version": "0.8.6+commit.11564f7e"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "conversionRate",
+						"type": "uint256"
+					}
+				],
+				"name": "convert",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "convertedAmount",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "pure",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/ConvertLib.sol": "ConvertLib"
+		},
+		"evmVersion": "berlin",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"contracts/ConvertLib.sol": {
+			"keccak256": "0xe344d3c3e14917e65d03a5d54fbb4adb59134da9c29b9b9ec1f45428c4549f33",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://b06d1e1183478848516a033d4fdd7fc1ab8e37a5eeefeeb39a93772f0743a6e1",
+				"dweb:/ipfs/QmRo8D6zoL2qxsbPzCdMpyoni8qtAugaLCEoZ59kTowvLu"
+			]
+		}
+	},
+	"version": 1
+}
