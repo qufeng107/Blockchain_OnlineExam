@@ -1,26 +1,26 @@
 
 contract Ownable{
 
-    address private _owner;
-
+    // map owner address (can have multiple owners)
+    mapping (address => bool) private owners;
 
     constructor() {
-        _owner = msg.sender;
+        owners[msg.sender] = true;
     }
 
-
-    function viewOwner() public view virtual returns (address) {
-        return _owner;
+    // add new owner address
+    function addOwner(address newOwner) public onlyOwner{
+        owners[newOwner] = true;
     }
 
+    // check if it's the owner address
+    function isOwner(address owner) public view returns (bool){
+        return owners[owner];
+    }
 
     modifier onlyOwner() {
-        require(_owner == msg.sender, "Ownerable: caller is not the owner");
+        require(owners[msg.sender] == true, "Ownerable: caller is not the owner");
         _;
     }
 
-
-    function transferOwnership(address newOwner) public virtual onlyOwner {
-    _owner = newOwner;
-    }
 }
