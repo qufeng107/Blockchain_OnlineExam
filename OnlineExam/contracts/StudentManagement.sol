@@ -5,7 +5,9 @@ pragma solidity >=0.7.0 <0.9.0;
 
 // SPDX-License-Identifier: MIT
 
+// interface of university management contract
 interface UniversityInterface{
+
     // check if it's the university address
     function isOwner(address owner) external view returns (bool);
 }
@@ -35,32 +37,38 @@ contract StudentManagement{
         owner = msg.sender;
     }
 
+    // modifier: only owner (university) address can call the function
     modifier onlyOwner() {
         require(UniversityInterface(universityContract).isOwner(msg.sender) == true, "Ownerable: caller is not the owner");
         _;
     }
 
+    // initial set up of contract address of university management
     function init(address _owner) public{
         require(owner == msg.sender, "Ownerable: caller is not the owner");
         universityContract = _owner;
     }
 
+    // change contract address of university management
     function changeInit(address _owner) public onlyOwner{
         universityContract = _owner;
     }
-    
+
+    // show university management contract address
     function showUniversityContractAddr() public view returns(address){
         return universityContract;
     }
 
-    function getStudent(uint _studentID) public view returns (student memory){
+    // get student infomation by ID
+    function getStudent(uint _studentID) external view returns (address, string memory){
         
         // require the student exists.
         require(students[_studentID].isExist == true, "student does not exist!");
 
-        return students[_studentID];
+        return (students[_studentID].studentAddr, students[_studentID].studentPK);
     }
 
+    // update or add student
     function updateStudent(uint _studentID, address _studentAddr, string memory _studentPK) public onlyOwner{
 
         // require the student ID to not be empty.
@@ -77,10 +85,11 @@ contract StudentManagement{
         students[_studentID].studentAddr = _studentAddr;
         students[_studentID].studentPK = _studentPK;
 
-        // emits item added event.
+        // emits student added event.
         emit studentAdded(_studentID, students[_studentID].studentAddr, students[_studentID].studentPK);
     }
 
+    // delete student
     function deleteStudent(uint _studentID) public onlyOwner{
 
         // require the student ID to not be empty.
@@ -89,7 +98,7 @@ contract StudentManagement{
         // adds the student to the storage.
         students[_studentID].isExist = false;
 
-        // emits item added event.
+        // emits student deleted event.
         emit studentDeleted(_studentID);
     }
 }
