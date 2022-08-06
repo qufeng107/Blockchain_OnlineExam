@@ -11,7 +11,7 @@ contract UniversityManagement{
         owners[msg.sender] = true;
     }
 
-    // modifier: only owner (university) address can call the function
+    // modifier: only owner (university) address can call the 'onlyOwner' function.
     modifier onlyOwner() {
         require(owners[msg.sender] == true, "Ownerable: caller is not the owner");
         _;
@@ -24,7 +24,9 @@ contract UniversityManagement{
 
     // delete owner address
     function deleteOwner(address _owner) public onlyOwner{
-        owners[_owner] = false;
+
+        delete owners[_owner];
+        // owners[_owner] = false;
     }
 
     // check if it's the owner address
