@@ -19,16 +19,21 @@ contract StudentManagement{
     address owner;
     address universityContract;
 
+    // address and public key of a student.
     struct student {
         bool isExist;
         address studentAddr;
         string studentPK;
     }
 
+    // map student id to student information.
     mapping (uint => student) private students;
 
+    // all student IDs.
+    uint [] studentIDs;
+
     // Emits an event when a new student is added, you can use this to update remote student lists.
-    event studentAdded(uint studentID, address studentAddr, string studentPK);
+    event studentUpdated(uint studentID, address studentAddr, string studentPK);
 
     // Emits an event when a new student is added, you can use this to update remote student lists.
     event studentDeleted(uint studentID);
@@ -37,7 +42,7 @@ contract StudentManagement{
         owner = msg.sender;
     }
 
-    // modifier: only owner (university) address can call the function
+    // modifier: only owner (university) address can call the 'onlyOwner' function.
     modifier onlyOwner() {
         require(UniversityInterface(universityContract).isOwner(msg.sender) == true, "Ownerable: caller is not the owner");
         _;
@@ -68,6 +73,12 @@ contract StudentManagement{
         return (students[_studentID].studentAddr, students[_studentID].studentPK);
     }
 
+    // get all student IDs
+    function getStudentIDs() external view returns (uint [] memory){
+
+        return studentIDs;
+    }
+
     // update or add student
     function updateStudent(uint _studentID, address _studentAddr, string memory _studentPK) public onlyOwner{
 
@@ -80,13 +91,18 @@ contract StudentManagement{
         // require the student public key to not be empty.
         require(bytes(_studentPK).length > 0, "student public key is empty!");
 
-        // adds the student to the storage.
-        students[_studentID].isExist = true;
+        // record student IDs
+        if(students[_studentID].isExist == false){
+            studentIDs.push(_studentID);
+            students[_studentID].isExist = true;
+        }
+
+        // update student info to the storage.
         students[_studentID].studentAddr = _studentAddr;
         students[_studentID].studentPK = _studentPK;
 
-        // emits student added event.
-        emit studentAdded(_studentID, students[_studentID].studentAddr, students[_studentID].studentPK);
+        // emits student updated event.
+        emit studentUpdated(_studentID, students[_studentID].studentAddr, students[_studentID].studentPK);
     }
 
     // delete student
@@ -95,8 +111,12 @@ contract StudentManagement{
         // require the student ID to not be empty.
         require(_studentID != 0, "student ID is empty!");
 
-        // adds the student to the storage.
-        students[_studentID].isExist = false;
+        // delete the student info.
+        delete students[_studentID];
+        
+        // students[_studentID].isExist = false;
+        // students[_studentID].studentAddr = 0x0000000000000000000000000000000000000000;
+        // students[_studentID].studentPK = "";
 
         // emits student deleted event.
         emit studentDeleted(_studentID);
