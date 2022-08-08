@@ -1,7 +1,7 @@
 // Import the contract...
-const University = artifacts.require("UniversityManagement");
+const UniversityManagement = artifacts.require("UniversityManagement");
 
-module.exports = (deployer) => {
+module.exports = function(deployer) {
   // Deploy it!
-  deployer.deploy(University);
+  deployer.deploy(UniversityManagement);
 }
