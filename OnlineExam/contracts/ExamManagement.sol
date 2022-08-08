@@ -182,10 +182,9 @@ contract ExamManagement{
         // require the exam exists.
         require(exams[_examID].isExist != false, "exam not exists!");
 
+        delete exams[_examID];
         
         // delete the exam info.
-        delete exams[_examID];
-
         // exams[_examID].isExist = false;
         // exams[_examID].isExpired = false;
         // exams[_examID].startTime = "";

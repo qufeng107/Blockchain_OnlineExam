@@ -113,7 +113,6 @@ contract StudentManagement{
 
         // delete the student info.
         delete students[_studentID];
-        
         // students[_studentID].isExist = false;
         // students[_studentID].studentAddr = 0x0000000000000000000000000000000000000000;
         // students[_studentID].studentPK = "";
