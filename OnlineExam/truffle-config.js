@@ -51,6 +51,7 @@ module.exports = {
       port: 7545,
       network_id: "*"
     }
+    
     //
     // An additional network, but with some advanced options…
     // advanced: {
