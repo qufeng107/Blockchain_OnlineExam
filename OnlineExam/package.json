@@ -1,0 +1,25 @@
+{
+  "name": "onlineexam",
+  "version": "1.0.0",
+  "description": "",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "dev": "next client",
+    "artifacts": "cp -r ./build/contracts/ ./client/web3/artifacts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@metamask/detect-provider": "^1.2.0",
+    "@truffle/contract": "^4.5.20",
+    "@truffle/interface-adapter": "^0.5.20",
+    "next": "^12.2.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "web3": "^1.7.5"
+  }
+}
