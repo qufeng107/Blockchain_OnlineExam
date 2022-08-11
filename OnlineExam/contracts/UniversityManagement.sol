@@ -24,9 +24,7 @@ contract UniversityManagement{
 
     // delete owner address
     function deleteOwner(address _owner) public onlyOwner{
-
         delete owners[_owner];
-        // owners[_owner] = false;
     }
 
     // check if it's the owner address
