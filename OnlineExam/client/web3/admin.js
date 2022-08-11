@@ -76,20 +76,20 @@ export const initialization = async (universityAddress, studentAddress) => {
     await ethereum.enable()
     const addresses = await eth.getAccounts()
 
-    const result1 = await student.changeInit(
+    const result1 = await student.init(
       universityAddress,
     {
       from: addresses[0],
     })
 
-    const result2 = await exam.changeInit(
+    const result2 = await exam.init(
       universityAddress,
       studentAddress,
     {
       from: addresses[0],
     })
 
-    const result3 = await key.changeInit(
+    const result3 = await key.init(
       universityAddress,
     {
       from: addresses[0],
@@ -113,20 +113,20 @@ export const resetAddr = async (universityAddress, studentAddress) => {
     await ethereum.enable()
     const addresses = await eth.getAccounts()
 
-    const result1 = await student.init(
+    const result1 = await student.changeInit(
       universityAddress,
     {
       from: addresses[0],
     })
 
-    const result2 = await exam.init(
+    const result2 = await exam.changeInit(
       universityAddress,
       studentAddress,
     {
       from: addresses[0],
     })
 
-    const result3 = await key.init(
+    const result3 = await key.changeInit(
       universityAddress,
     {
       from: addresses[0],

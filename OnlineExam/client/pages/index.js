@@ -52,7 +52,7 @@ export default class IndexPage extends React.Component {
       deleteStudentByID: 0,
       getExamByID: 0,
       addExamID: 0,
-      addExamStudentIDs: [0],
+      addExamStudentIDs: '',
       addExamStartTime: '',
       addExamEndTime: '',
       addExamMarkerPK: '',
@@ -63,10 +63,10 @@ export default class IndexPage extends React.Component {
       getExamDKbyID: 0,
       getExamDKbyAddr: '',
       addExamDKsID: 0,
-      addExamDKsStudentAddr: [''],
-      addexamDKs: [''],
+      addExamDKsStudentAddr: '',
+      addExamDKs: '',
       deleteExamDKID: 0,
-      deleteExamDK: []
+      deleteExamDK: ''
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -121,7 +121,8 @@ export default class IndexPage extends React.Component {
   }
 
   async init(event) {
-    const tx = await initialization(this.state.uniContAddr,this.state.stuContAddr)
+    // const tx = await initialization(this.state.uniContAddr,this.state.stuContAddr)
+    const tx = await initialization("0x57FC535EB3E0D21f8DDd0bcFba10D41e0504eDCF","0x1cfA115BeC8C530a0bd12771FccbBB4cc09Ba0A4")
     console.log(tx)
     event.preventDefault();
   }
@@ -175,7 +176,13 @@ export default class IndexPage extends React.Component {
     const tx = await getExam(this.state.getExamByID)
     console.log(tx)    
     alert('Exam ID : ' + tx.examID
-    + '\nExam Information : ' + tx.examInformation)
+    + '\nIs exist ? ' + tx.examInformation[0]
+    + '\nIs expired ? ' + tx.examInformation[1]
+    + '\nStart time : ' + tx.examInformation[2]
+    + '\nEnd time : ' + tx.examInformation[3]
+    + '\nMarker public key : ' + tx.examInformation[4]
+    + '\nDescription : ' + tx.examInformation[5]
+    + '\nInvited Students (address, public key): ' + tx.examInformation[6])
     event.preventDefault();
   }
 
@@ -194,7 +201,7 @@ export default class IndexPage extends React.Component {
     // newExam[5],  // description
     const newExam = new Array(
       this.state.addExamID,
-      this.state.addExamStudentIDs,
+      this.state.addExamStudentIDs.split(','),
       this.state.addExamStartTime,
       this.state.addExamEndTime,
       this.state.addExamMarkerPK,
@@ -233,11 +240,12 @@ export default class IndexPage extends React.Component {
     // newDKs[0],  // exam id
     // newDKs[1],  // students' address array
     // newDKs[2],  // students' decryption key array
-    const newDKs = new Array(
+    var newDKs = new Array(
       this.state.addExamDKsID,
-      this.state.addExamDKsStudentAddr,
-      this.state.addexamDKs,
+      this.state.addExamDKsStudentAddr.split(','),
+      this.state.addExamDKs.split(',')
     )
+
     const tx = await updateDKs(newDKs)
     console.log(tx)
     event.preventDefault();
@@ -246,7 +254,7 @@ export default class IndexPage extends React.Component {
   async deleteExamDKs(event) {
     const tx = await deleteDKs(
       this.state.deleteExamDKID, 
-      this.state.deleteExamDK
+      this.state.deleteExamDK.split(',')
     )
     console.log(tx)
     event.preventDefault();
@@ -306,7 +314,7 @@ export default class IndexPage extends React.Component {
         <br/><br/>
 
         <form>
-        Set up University and Student Management contract address(owner only)<br/>
+        Setup/reset University and Student Management contract address(Contract creator only)<br/>
           <label>
           University Management contract address:<br/>
           <input name="uniContAddr" type="text" value={this.state.uniContAddr} onChange={this.handleChange} />
@@ -323,7 +331,7 @@ export default class IndexPage extends React.Component {
         <br/><br/>
 
         <form>
-        Reset University and Student Management contract address(Contract creator only)<br/>
+        Update University and Student Management contract address(owner only)<br/>
           <label>
           New University Management contract address:<br/>
           <input name="newUniContAddr" type="text" value={this.state.newUniContAddr} onChange={this.handleChange} />
@@ -421,22 +429,27 @@ export default class IndexPage extends React.Component {
           Exam ID:<br/>
           <input name="addExamID" type="text" value={this.state.addExamID} onChange={this.handleChange} />
           </label>
+          <br/>
           <label>
-          Invited students' IDs:<br/>
+          Invited students' IDs (example: 001,002,003):<br/>
           <input name="addExamStudentIDs" type="text" value={this.state.addExamStudentIDs} onChange={this.handleChange} />
           </label>
+          <br/>
           <label>
           Exam start time:<br/>
           <input name="addExamStartTime" type="text" value={this.state.addExamStartTime} onChange={this.handleChange} />
           </label>
+          <br/>
           <label>
           Exam end time:<br/>
           <input name="addExamEndTime" type="text" value={this.state.addExamEndTime} onChange={this.handleChange} />
           </label>
+          <br/>
           <label>
           Marker's public key:<br/>
           <input name="addExamMarkerPK" type="text" value={this.state.addExamMarkerPK} onChange={this.handleChange} />
           </label>
+          <br/>
           <label>
           Exam description:<br/>
           <input name="addExamDescription" type="text" value={this.state.addExamDescription} onChange={this.handleChange} />
@@ -450,11 +463,12 @@ export default class IndexPage extends React.Component {
         <form>
         Set exam status (owner only):<br/>
           <label>
-          Exam ID:
+          Exam ID:<br/>
           <input name="setExamStatusID" type="text" value={this.state.setExamStatusID} onChange={this.handleChange} />
           </label>
+          <br/>
           <label>
-          Is the exam expired?
+          Is the exam expired?<br/>
           <input name="setExamStatus" type="text" value={this.state.setExamStatus} onChange={this.handleChange} />
           </label>
         </form>
@@ -466,23 +480,24 @@ export default class IndexPage extends React.Component {
         <form>
         Delete exam information by ID (owner only):<br/>
           <label>
-          Exam ID:
+          Exam ID:<br/>
           <input name="deleteExamID" type="text" value={this.state.deleteExamID} onChange={this.handleChange} />
           </label>
         </form>
         <button onClick={this.deleteExamInfo}>
-          Delete
+          Delete<br/>
         </button>
         <br/><br/>
 
         <form>
         Show exam paper decryption key by exam ID and student address:<br/>
           <label>
-          Exam ID:
+          Exam ID:<br/>
           <input name="getExamDKbyID" type="text" value={this.state.getExamDKbyID} onChange={this.handleChange} />
           </label>
+          <br/>
           <label>
-          Student address:
+          Student address:<br/>
           <input name="getExamDKbyAddr" type="text" value={this.state.getExamDKbyAddr} onChange={this.handleChange} />
           </label>
         </form>
@@ -494,15 +509,17 @@ export default class IndexPage extends React.Component {
         <form>
         Add/update exam paper decryption keys (owner only):<br/>
           <label>
-          Exam ID:
+          Exam ID:<br/>
           <input name="addExamDKsID" type="text" value={this.state.addExamDKsID} onChange={this.handleChange} />
           </label>
+          <br/>
           <label>
-          Student addresses:
+          Student addresses (example: addr1,addr2,addr3):<br/>
           <input name="addExamDKsStudentAddr" type="text" value={this.state.addExamDKsStudentAddr} onChange={this.handleChange} />
           </label>
+          <br/>
           <label>
-          Exam decryption keys (number and order should match student addresses above):
+          Exam decryption keys (number and order of DKs should match student addresses above):<br/>
           <input name="addExamDKs" type="text" value={this.state.addExamDKs} onChange={this.handleChange} />
           </label>
         </form>
@@ -514,11 +531,12 @@ export default class IndexPage extends React.Component {
         <form>
         Delete exam paper decryption keys by exam ID and student addresses (owner only):<br/>
           <label>
-          Exam ID:
+          Exam ID:<br/>
           <input name="deleteExamDKID" type="text" value={this.state.deleteExamDKID} onChange={this.handleChange} />
           </label>
+          <br/>
           <label>
-          Student addresses:
+          Student addresses (example: addr1,addr2,addr3):<br/>
           <input name="deleteExamDK" type="text" value={this.state.deleteExamDK} onChange={this.handleChange} />
           </label>
         </form>
