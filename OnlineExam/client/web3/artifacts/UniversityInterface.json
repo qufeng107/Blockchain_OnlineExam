@@ -21,7 +21,7 @@
       "type": "function"
     }
   ],
-  "metadata": "{\"compiler\":{\"version\":\"0.8.15+commit.e14f2714\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"isOwner\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/StudentManagement.sol\":\"UniversityInterface\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/StudentManagement.sol\":{\"keccak256\":\"0x44161876696650bad8f1eb60b5ef245b7ce5c3c6991d4afb2d97da933b6ac15f\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://38bcbdc28fd8a6c79558b6d57298de12d6d658bcf5c586dfdc65f4f682a20169\",\"dweb:/ipfs/QmcBG1D7CJNsx7BXb8SuN25Xw9PesTNcaJpBFZByr6AoFd\"]}},\"version\":1}",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.15+commit.e14f2714\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"isOwner\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/StudentManagement.sol\":\"UniversityInterface\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/StudentManagement.sol\":{\"keccak256\":\"0x7d328600f8d179a1753de06b3d7dfc1b777ed475565f14924b8f41c3b1e3a746\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://f428e76aa3b431c6b797afd2f15530b0ca2bfd3714cebb863bc28ca2e07db36b\",\"dweb:/ipfs/QmaSwUuNKJ6ko2ESA1xhhr9XyzjeNGtp3bskDqGF4z5gSp\"]}},\"version\":1}",
   "bytecode": "0x",
   "deployedBytecode": "0x",
   "immutableReferences": {},
@@ -29,7 +29,7 @@
   "deployedGeneratedSources": [],
   "sourceMap": "",
   "deployedSourceMap": "",
-  "source": "\n// import \"./Ownable.sol\"; // Path to the imported library\n\npragma solidity >=0.7.0 <0.9.0;\n\n// SPDX-License-Identifier: MIT\n\n// interface of university management contract\ninterface UniversityInterface{\n\n    // check if it's the university address\n    function isOwner(address owner) external view returns (bool);\n}\n\n\ncontract StudentManagement{\n    // The following function can only be called by the owner\n\n    address owner;\n    address universityContract;\n\n    // address and public key of a student.\n    struct student {\n        bool isExist;\n        address studentAddr;\n        string studentPK;\n    }\n\n    // map student id to student information.\n    mapping (uint => student) private students;\n\n    // all student IDs.\n    uint [] studentIDs;\n\n    // Emits an event when a new student is added, you can use this to update remote student lists.\n    event studentUpdated(uint studentID, address studentAddr, string studentPK);\n\n    // Emits an event when a new student is added, you can use this to update remote student lists.\n    event studentDeleted(uint studentID);\n\n    constructor() {\n        owner = msg.sender;\n    }\n\n    // modifier: only owner (university) address can call the 'onlyOwner' function.\n    modifier onlyOwner() {\n        require(UniversityInterface(universityContract).isOwner(msg.sender) == true, \"Ownerable: caller is not the owner\");\n        _;\n    }\n\n    // initial set up of contract address of university management\n    function init(address _owner) public{\n        require(owner == msg.sender, \"Ownerable: caller is not the owner\");\n        universityContract = _owner;\n    }\n\n    // change contract address of university management\n    function changeInit(address _owner) public onlyOwner{\n        universityContract = _owner;\n    }\n\n    // show university management contract address\n    function showUniversityContractAddr() public view returns(address){\n        return universityContract;\n    }\n\n    // get student infomation by ID\n    function getStudent(uint _studentID) external view returns (address, string memory){\n        \n        // require the student exists.\n        require(students[_studentID].isExist == true, \"student does not exist!\");\n\n        return (students[_studentID].studentAddr, students[_studentID].studentPK);\n    }\n\n    // get all student IDs\n    function getStudentIDs() external view returns (uint [] memory){\n\n        return studentIDs;\n    }\n\n    // update or add student\n    function updateStudent(uint _studentID, address _studentAddr, string memory _studentPK) public onlyOwner{\n\n        // require the student ID to not be empty.\n        require(_studentID != 0, \"student ID is empty!\");\n\n        // require the student address to not be empty.\n        require(_studentAddr != address(0x0), \"student address is empty!\");\n\n        // require the student public key to not be empty.\n        require(bytes(_studentPK).length > 0, \"student public key is empty!\");\n\n        // record student IDs\n        if(students[_studentID].isExist == false){\n            studentIDs.push(_studentID);\n            students[_studentID].isExist = true;\n        }\n\n        // update student info to the storage.\n        students[_studentID].studentAddr = _studentAddr;\n        students[_studentID].studentPK = _studentPK;\n\n        // emits student updated event.\n        emit studentUpdated(_studentID, students[_studentID].studentAddr, students[_studentID].studentPK);\n    }\n\n    // delete student\n    function deleteStudent(uint _studentID) public onlyOwner{\n\n        // require the student ID to not be empty.\n        require(_studentID != 0, \"student ID is empty!\");\n\n        // delete the student info.\n        delete students[_studentID];\n        \n        // students[_studentID].isExist = false;\n        // students[_studentID].studentAddr = 0x0000000000000000000000000000000000000000;\n        // students[_studentID].studentPK = \"\";\n\n        // emits student deleted event.\n        emit studentDeleted(_studentID);\n    }\n}\n",
+  "source": "\n// import \"./Ownable.sol\"; // Path to the imported library\n\npragma solidity >=0.7.0 <0.9.0;\n\n// SPDX-License-Identifier: MIT\n\n// interface of university management contract\ninterface UniversityInterface{\n\n    // check if it's the university address\n    function isOwner(address owner) external view returns (bool);\n}\n\n\ncontract StudentManagement{\n    // The following function can only be called by the owner\n\n    address owner;\n    address universityContract;\n\n    // address and public key of a student.\n    struct student {\n        bool isExist;\n        address studentAddr;\n        string studentPK;\n    }\n\n    // map student id to student information.\n    mapping (uint => student) private students;\n\n    // all student IDs.\n    uint [] studentIDs;\n\n    // Emits an event when a new student is added, you can use this to update remote student lists.\n    event studentUpdated(uint studentID, address studentAddr, string studentPK);\n\n    // Emits an event when a new student is added, you can use this to update remote student lists.\n    event studentDeleted(uint studentID);\n\n    constructor() {\n        owner = msg.sender;\n    }\n\n    // modifier: only owner (university) address can call the 'onlyOwner' function.\n    modifier onlyOwner() {\n        require(UniversityInterface(universityContract).isOwner(msg.sender) == true, \"Ownerable: caller is not the owner\");\n        _;\n    }\n\n    // initial set up of contract address of university management\n    function init(address _owner) public{\n        require(owner == msg.sender, \"Ownerable: caller is not the owner\");\n        universityContract = _owner;\n    }\n\n    // change contract address of university management\n    function changeInit(address _owner) public onlyOwner{\n        universityContract = _owner;\n    }\n\n    // show university management contract address\n    function showUniversityContractAddr() public view returns(address){\n        return universityContract;\n    }\n\n    // get student infomation by ID\n    function getStudent(uint _studentID) external view returns (address, string memory){\n        \n        // require the student exists.\n        require(students[_studentID].isExist == true, \"student does not exist!\");\n\n        return (students[_studentID].studentAddr, students[_studentID].studentPK);\n    }\n\n    // get all student IDs\n    function getStudentIDs() external view returns (uint [] memory){\n\n        return studentIDs;\n    }\n\n    // update or add student\n    function updateStudent(uint _studentID, address _studentAddr, string memory _studentPK) public onlyOwner{\n\n        // require the student ID to not be empty.\n        require(_studentID != 0, \"student ID is empty!\");\n\n        // require the student address to not be empty.\n        require(_studentAddr != address(0x0), \"student address is empty!\");\n\n        // require the student public key to not be empty.\n        require(bytes(_studentPK).length > 0, \"student public key is empty!\");\n\n        // record student IDs\n        if(students[_studentID].isExist == false){\n            studentIDs.push(_studentID);\n            students[_studentID].isExist = true;\n        }\n\n        // update student info to the storage.\n        students[_studentID].studentAddr = _studentAddr;\n        students[_studentID].studentPK = _studentPK;\n\n        // emits student updated event.\n        emit studentUpdated(_studentID, students[_studentID].studentAddr, students[_studentID].studentPK);\n    }\n\n    // delete student\n    function deleteStudent(uint _studentID) public onlyOwner{\n\n        // require the student ID to not be empty.\n        require(_studentID != 0, \"student ID is empty!\");\n\n        // delete the student info.\n        delete students[_studentID];\n        // students[_studentID].isExist = false;\n        // students[_studentID].studentAddr = 0x0000000000000000000000000000000000000000;\n        // students[_studentID].studentPK = \"\";\n\n        // emits student deleted event.\n        emit studentDeleted(_studentID);\n    }\n}\n",
   "sourcePath": "/Users/reol/Documents/CyberSecurity/Msc project/code/OnlineExam/contracts/StudentManagement.sol",
   "ast": {
     "absolutePath": "project:/contracts/StudentManagement.sol",
@@ -2950,7 +2950,7 @@
             "body": {
               "id": 253,
               "nodeType": "Block",
-              "src": "3516:469:0",
+              "src": "3516:460:0",
               "statements": [
                 {
                   "expression": {
@@ -3128,7 +3128,7 @@
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
                         "referencedDeclaration": 232,
-                        "src": "3967:10:0",
+                        "src": "3958:10:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint256",
                           "typeString": "uint256"
@@ -3147,7 +3147,7 @@
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
                       "referencedDeclaration": 40,
-                      "src": "3952:14:0",
+                      "src": "3943:14:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_event_nonpayable$_t_uint256_$returns$__$",
                         "typeString": "function (uint256)"
@@ -3161,7 +3161,7 @@
                     "lValueRequested": false,
                     "names": [],
                     "nodeType": "FunctionCall",
-                    "src": "3952:26:0",
+                    "src": "3943:26:0",
                     "tryCall": false,
                     "typeDescriptions": {
                       "typeIdentifier": "t_tuple$__$",
@@ -3170,7 +3170,7 @@
                   },
                   "id": 252,
                   "nodeType": "EmitStatement",
-                  "src": "3947:31:0"
+                  "src": "3938:31:0"
                 }
               ]
             },
@@ -3237,18 +3237,18 @@
               "src": "3516:0:0"
             },
             "scope": 255,
-            "src": "3460:525:0",
+            "src": "3460:516:0",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "public"
           }
         ],
         "scope": 256,
-        "src": "320:3667:0",
+        "src": "320:3658:0",
         "usedErrors": []
       }
     ],
-    "src": "61:3927:0"
+    "src": "61:3918:0"
   },
   "compiler": {
     "name": "solc",
@@ -3256,7 +3256,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.8",
-  "updatedAt": "2022-08-07T13:41:20.740Z",
+  "updatedAt": "2022-08-11T14:36:07.400Z",
   "devdoc": {
     "kind": "dev",
     "methods": {},

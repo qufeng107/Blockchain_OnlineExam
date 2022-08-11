@@ -26,7 +26,7 @@
       "type": "function"
     }
   ],
-  "metadata": "{\"compiler\":{\"version\":\"0.8.15+commit.e14f2714\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_studentID\",\"type\":\"uint256\"}],\"name\":\"getStudent\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/ExamManagement.sol\":\"StudentInterface\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/ExamManagement.sol\":{\"keccak256\":\"0xb44be589a06b94c9ed9bb1adf13f240c4fef5d3a24af788f12d0a4e04c807dba\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://8c62308c20b6437fe591176dc2649cdc7c6dc5bbf841bd5ae4d055aaf4e39bb6\",\"dweb:/ipfs/QmUJXEQZgimjAgkXV7jW8x9i6i897MxD17575ZtdpeDWLk\"]}},\"version\":1}",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.15+commit.e14f2714\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_studentID\",\"type\":\"uint256\"}],\"name\":\"getStudent\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/ExamManagement.sol\":\"StudentInterface\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/ExamManagement.sol\":{\"keccak256\":\"0x99f262a63e1c9e061f8b1377dac35eb91af1854cb19a8253f4c210ff2cc11410\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://ff3a90a8aeba2b9d2b6b3947d8203f4c511929e78948029e415ce50968ce20ad\",\"dweb:/ipfs/QmcDCyMZBy74kXe8buWMEUnkhTHC15BjkTbstyVj9NSC3x\"]}},\"version\":1}",
   "bytecode": "0x",
   "deployedBytecode": "0x",
   "immutableReferences": {},
@@ -34,7 +34,7 @@
   "deployedGeneratedSources": [],
   "sourceMap": "",
   "deployedSourceMap": "",
-  "source": "\n// import \"./Ownable.sol\"; // Path to the imported library\n\npragma solidity >=0.7.0 <0.9.0;\n\n// SPDX-License-Identifier: MIT\n\n// interface of university management contract.\ninterface UniversityInterface{\n\n    // check if it's the university address.\n    function isOwner(address owner) external view returns (bool);\n}\n\n// interface of student management contract.\ninterface StudentInterface{\n    \n    // get the student address and public key by ID.\n    function getStudent(uint _studentID) external view returns (address, string memory);\n}\n\n\ncontract ExamManagement{\n\n    address owner;\n    address universityContract;\n    address studentContract;\n\n    // address and public key of a student.\n    struct student{\n        address studentAddr;\n        string studentPK;\n    }\n\n    // exam infomation.\n    struct exam {\n        bool isExist;\n        bool isExpired;\n        string startTime;\n        string endTime;\n        string markerPK;\n        string description;\n        student[] students;\n    }\n\n    // map exam ID to exam details and invited students' information.\n    mapping (uint => exam) private exams;\n\n    // all exam IDs.\n    uint [] examIDs;\n\n    // Emits an event when a new exam is updated, you can use this to update remote exam lists.\n    event examUpdated(uint examID, string startTime, string endTime, string markerPK, string description);\n\n    // Emits an event when an exam is expired, you can use this to update remote exam lists.\n    event examStatusChanged(uint examID, bool isExpired);\n\n    // Emits an event when an exam is deleted, you can use this to update remote exam lists.\n    event examDeleted(uint examID);\n\n    constructor() {\n        owner = msg.sender;\n    }\n\n    // modifier: only owner (university) address can call the 'onlyOwner' function.\n    modifier onlyOwner() {\n        require(UniversityInterface(universityContract).isOwner(msg.sender) == true, \"Ownerable: caller is not the owner\");\n        _;\n    }\n\n    // initial set up of contract addresses of university management and student management.\n    function init(address _universityContract, address _studentContract) public{\n        require(owner == msg.sender, \"Ownerable: caller is not the owner\");\n        universityContract = _universityContract;\n        studentContract = _studentContract;\n    }\n\n    // change contract addresses of university management.\n    function changeUniversityContractAddr(address _universityContract) public onlyOwner{\n        universityContract = _universityContract;\n    }\n    \n    // change contract addresses of student management.\n    function changeStudentContractAddr(address _studentContract) public onlyOwner{\n        studentContract = _studentContract;\n    }\n\n    // show university management contract address.\n    function showUniversityContractAddr() public view returns(address){\n        return universityContract;\n    }\n    \n    // show student management contract address.\n    function showStudentContractAddr() public view returns(address){\n        return studentContract;\n    }\n\n    // get exam infomation by ID.\n    function getExam(uint _examID) public view returns (exam memory){\n        \n        // require the exam exists.\n        require(exams[_examID].isExist == true, \"exam does not exist!\");\n\n        return exams[_examID];\n    }\n\n    // get all exam IDs\n    function getExamIDs() external view returns (uint [] memory){\n\n        return examIDs;\n    }\n\n    // update or add exam\n    function updateExam(uint _examID, uint[] memory _studentIDs, string memory _startTime, string memory _endTime, string memory _markerPK, string memory _description) public onlyOwner{\n\n        // require the exam ID to not be empty.\n        require(_examID != 0, \"student ID is empty!\");\n\n        // require the student IDs to not be empty.\n        require(_studentIDs.length > 0, \"student public key is empty!\");\n\n        // require the start time to not be empty.\n        require(bytes(_startTime).length > 0, \"student public key is empty!\");\n\n        // require the end time to not be empty.\n        require(bytes(_endTime).length > 0, \"student public key is empty!\");\n\n        // require the marker public key to not be empty.\n        require(bytes(_markerPK).length > 0, \"student public key is empty!\");\n\n        // record exam IDs\n        if(exams[_examID].isExist == false){\n            examIDs.push(_examID);\n            exams[_examID].isExist = true;\n        }\n\n        // update the exam info to the storage.\n        exams[_examID].startTime = _startTime;\n        exams[_examID].endTime = _endTime;\n        exams[_examID].markerPK = _markerPK;\n        exams[_examID].description = _description;\n\n        // find all student addresses and public keys by ID\n        uint length = _studentIDs.length;\n        for (uint i = 0; i < length; i++) {\n            student memory newStudent;\n            (newStudent.studentAddr, newStudent.studentPK) = findStudentPK(_studentIDs[i]);\n            exams[_examID].students.push(newStudent);\n        }\n\n        // emits exam updated event.\n        emit examUpdated(_examID, exams[_examID].startTime, exams[_examID].endTime, exams[_examID].markerPK, exams[_examID].description);\n    }\n\n    // find student public key by ID\n    function findStudentPK(uint _studentID) private view returns(address, string memory){\n\n        return StudentInterface(studentContract).getStudent(_studentID);\n    }\n\n    function setExpired(uint _examID, bool _isExpired) public onlyOwner{\n\n        // require the exam ID to not be empty.\n        require(_examID != 0, \"exam ID is empty!\");\n        \n        // require the exam exists.\n        require(exams[_examID].isExist != false, \"exam not exists!\");\n\n        // set the exam status.\n        exams[_examID].isExpired = _isExpired;\n\n        // emits exam status changed event.\n        emit examStatusChanged(_examID, exams[_examID].isExpired);\n    }\n\n    // delete exam\n    function deleteExam(uint _examID) public onlyOwner{\n\n        // require the exam ID to not be empty.\n        require(_examID != 0, \"exam ID is empty!\");\n        \n        // require the exam exists.\n        require(exams[_examID].isExist != false, \"exam not exists!\");\n\n        \n        // delete the exam info.\n        delete exams[_examID];\n\n        // exams[_examID].isExist = false;\n        // exams[_examID].isExpired = false;\n        // exams[_examID].startTime = \"\";\n        // exams[_examID].endTime = \"\";\n        // exams[_examID].markerPK = \"\";\n        // exams[_examID].description = \"\";\n\n        // delete exams[_examID].students;\n\n        // uint length = exams[_examID].students.length;\n        // for (uint i = 0; i < length; i++) {\n        //     exams[_examID].students.pop();\n        // }\n\n        // emits exam deleted event.\n        emit examDeleted(_examID);\n    }\n}\n",
+  "source": "\n// import \"./Ownable.sol\"; // Path to the imported library\n\npragma solidity >=0.7.0 <0.9.0;\n\n// SPDX-License-Identifier: MIT\n\n// interface of university management contract.\ninterface UniversityInterface{\n\n    // check if it's the university address.\n    function isOwner(address owner) external view returns (bool);\n}\n\n// interface of student management contract.\ninterface StudentInterface{\n    \n    // get the student address and public key by ID.\n    function getStudent(uint _studentID) external view returns (address, string memory);\n}\n\n\ncontract ExamManagement{\n\n    address owner;\n    address universityContract;\n    address studentContract;\n\n    // address and public key of a student.\n    struct student{\n        address studentAddr;\n        string studentPK;\n    }\n\n    // exam infomation.\n    struct exam {\n        bool isExist;\n        bool isExpired;\n        string startTime;\n        string endTime;\n        string markerPK;\n        string description;\n        student[] students;\n    }\n\n    // map exam ID to exam details and invited students' information.\n    mapping (uint => exam) private exams;\n\n    // all exam IDs.\n    uint [] examIDs;\n\n    // Emits an event when a new exam is updated, you can use this to update remote exam lists.\n    event examUpdated(uint examID, string startTime, string endTime, string markerPK, string description);\n\n    // Emits an event when an exam is expired, you can use this to update remote exam lists.\n    event examStatusChanged(uint examID, bool isExpired);\n\n    // Emits an event when an exam is deleted, you can use this to update remote exam lists.\n    event examDeleted(uint examID);\n\n    constructor() {\n        owner = msg.sender;\n    }\n\n    // modifier: only owner (university) address can call the 'onlyOwner' function.\n    modifier onlyOwner() {\n        require(UniversityInterface(universityContract).isOwner(msg.sender) == true, \"Ownerable: caller is not the owner\");\n        _;\n    }\n\n    // initial set up of contract addresses of university management and student management.\n    function init(address _universityContract, address _studentContract) public{\n        require(owner == msg.sender, \"Ownerable: caller is not the owner\");\n        universityContract = _universityContract;\n        studentContract = _studentContract;\n    }\n\n    // change contract addresses of university management.\n    function changeUniversityContractAddr(address _universityContract) public onlyOwner{\n        universityContract = _universityContract;\n    }\n    \n    // change contract addresses of student management.\n    function changeStudentContractAddr(address _studentContract) public onlyOwner{\n        studentContract = _studentContract;\n    }\n\n    // show university management contract address.\n    function showUniversityContractAddr() public view returns(address){\n        return universityContract;\n    }\n    \n    // show student management contract address.\n    function showStudentContractAddr() public view returns(address){\n        return studentContract;\n    }\n\n    // get exam infomation by ID.\n    function getExam(uint _examID) public view returns (exam memory){\n        \n        // require the exam exists.\n        require(exams[_examID].isExist == true, \"exam does not exist!\");\n\n        return exams[_examID];\n    }\n\n    // get all exam IDs\n    function getExamIDs() external view returns (uint [] memory){\n\n        return examIDs;\n    }\n\n    // update or add exam\n    function updateExam(uint _examID, uint[] memory _studentIDs, string memory _startTime, string memory _endTime, string memory _markerPK, string memory _description) public onlyOwner{\n\n        // require the exam ID to not be empty.\n        require(_examID != 0, \"student ID is empty!\");\n\n        // require the student IDs to not be empty.\n        require(_studentIDs.length > 0, \"student public key is empty!\");\n\n        // require the start time to not be empty.\n        require(bytes(_startTime).length > 0, \"student public key is empty!\");\n\n        // require the end time to not be empty.\n        require(bytes(_endTime).length > 0, \"student public key is empty!\");\n\n        // require the marker public key to not be empty.\n        require(bytes(_markerPK).length > 0, \"student public key is empty!\");\n\n        // record exam IDs\n        if(exams[_examID].isExist == false){\n            examIDs.push(_examID);\n            exams[_examID].isExist = true;\n        }\n\n        // update the exam info to the storage.\n        exams[_examID].startTime = _startTime;\n        exams[_examID].endTime = _endTime;\n        exams[_examID].markerPK = _markerPK;\n        exams[_examID].description = _description;\n\n        // find all student addresses and public keys by ID\n        uint length = _studentIDs.length;\n        for (uint i = 0; i < length; i++) {\n            student memory newStudent;\n            (newStudent.studentAddr, newStudent.studentPK) = findStudentPK(_studentIDs[i]);\n            exams[_examID].students.push(newStudent);\n        }\n\n        // emits exam updated event.\n        emit examUpdated(_examID, exams[_examID].startTime, exams[_examID].endTime, exams[_examID].markerPK, exams[_examID].description);\n    }\n\n    // find student public key by ID\n    function findStudentPK(uint _studentID) private view returns(address, string memory){\n\n        return StudentInterface(studentContract).getStudent(_studentID);\n    }\n\n    function setExpired(uint _examID, bool _isExpired) public onlyOwner{\n\n        // require the exam ID to not be empty.\n        require(_examID != 0, \"exam ID is empty!\");\n        \n        // require the exam exists.\n        require(exams[_examID].isExist != false, \"exam not exists!\");\n\n        // set the exam status.\n        exams[_examID].isExpired = _isExpired;\n\n        // emits exam status changed event.\n        emit examStatusChanged(_examID, exams[_examID].isExpired);\n    }\n\n    // delete exam\n    function deleteExam(uint _examID) public onlyOwner{\n\n        // require the exam ID to not be empty.\n        require(_examID != 0, \"exam ID is empty!\");\n        \n        // require the exam exists.\n        require(exams[_examID].isExist != false, \"exam not exists!\");\n\n        delete exams[_examID];\n        \n        // delete the exam info.\n        // exams[_examID].isExist = false;\n        // exams[_examID].isExpired = false;\n        // exams[_examID].startTime = \"\";\n        // exams[_examID].endTime = \"\";\n        // exams[_examID].markerPK = \"\";\n        // exams[_examID].description = \"\";\n\n        // delete exams[_examID].students;\n\n        // uint length = exams[_examID].students.length;\n        // for (uint i = 0; i < length; i++) {\n        //     exams[_examID].students.pop();\n        // }\n\n        // emits exam deleted event.\n        emit examDeleted(_examID);\n    }\n}\n",
   "sourcePath": "/Users/reol/Documents/CyberSecurity/Msc project/code/OnlineExam/contracts/ExamManagement.sol",
   "ast": {
     "absolutePath": "project:/contracts/ExamManagement.sol",
@@ -5567,7 +5567,7 @@
             "body": {
               "id": 469,
               "nodeType": "Block",
-              "src": "5941:834:0",
+              "src": "5941:833:0",
               "statements": [
                 {
                   "expression": {
@@ -5839,7 +5839,7 @@
                     "nodeType": "UnaryOperation",
                     "operator": "delete",
                     "prefix": true,
-                    "src": "6210:21:0",
+                    "src": "6168:21:0",
                     "subExpression": {
                       "baseExpression": {
                         "id": 460,
@@ -5847,7 +5847,7 @@
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
                         "referencedDeclaration": 52,
-                        "src": "6217:5:0",
+                        "src": "6175:5:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_mapping$_t_uint256_$_t_struct$_exam_$47_storage_$",
                           "typeString": "mapping(uint256 => struct ExamManagement.exam storage ref)"
@@ -5860,7 +5860,7 @@
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
                         "referencedDeclaration": 438,
-                        "src": "6223:7:0",
+                        "src": "6181:7:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint256",
                           "typeString": "uint256"
@@ -5871,7 +5871,7 @@
                       "isPure": false,
                       "lValueRequested": true,
                       "nodeType": "IndexAccess",
-                      "src": "6217:14:0",
+                      "src": "6175:14:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_struct$_exam_$47_storage",
                         "typeString": "struct ExamManagement.exam storage ref"
@@ -5884,7 +5884,7 @@
                   },
                   "id": 464,
                   "nodeType": "ExpressionStatement",
-                  "src": "6210:21:0"
+                  "src": "6168:21:0"
                 },
                 {
                   "eventCall": {
@@ -5895,7 +5895,7 @@
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
                         "referencedDeclaration": 438,
-                        "src": "6760:7:0",
+                        "src": "6759:7:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint256",
                           "typeString": "uint256"
@@ -5914,7 +5914,7 @@
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
                       "referencedDeclaration": 77,
-                      "src": "6748:11:0",
+                      "src": "6747:11:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_event_nonpayable$_t_uint256_$returns$__$",
                         "typeString": "function (uint256)"
@@ -5928,7 +5928,7 @@
                     "lValueRequested": false,
                     "names": [],
                     "nodeType": "FunctionCall",
-                    "src": "6748:20:0",
+                    "src": "6747:20:0",
                     "tryCall": false,
                     "typeDescriptions": {
                       "typeIdentifier": "t_tuple$__$",
@@ -5937,7 +5937,7 @@
                   },
                   "id": 468,
                   "nodeType": "EmitStatement",
-                  "src": "6743:25:0"
+                  "src": "6742:25:0"
                 }
               ]
             },
@@ -6004,18 +6004,18 @@
               "src": "5941:0:0"
             },
             "scope": 471,
-            "src": "5891:884:0",
+            "src": "5891:883:0",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "public"
           }
         ],
         "scope": 472,
-        "src": "545:6232:0",
+        "src": "545:6231:0",
         "usedErrors": []
       }
     ],
-    "src": "61:6717:0"
+    "src": "61:6716:0"
   },
   "compiler": {
     "name": "solc",
@@ -6023,7 +6023,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.8",
-  "updatedAt": "2022-08-07T13:38:23.219Z",
+  "updatedAt": "2022-08-11T14:34:26.974Z",
   "devdoc": {
     "kind": "dev",
     "methods": {},
