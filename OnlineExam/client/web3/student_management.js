@@ -8,9 +8,8 @@ export const getStudent = async (sid) => {
     const student = await loadContract(Student)
     const studentInfo = await student.getStudent.call(sid)
   
-    return { studentID: sid, studentInformation: studentInfo}
+    return { studentID: sid, studentAddr: studentInfo[0], studentPK: studentInfo[1]}
 
-    return result
   } catch (err) {
     console.error("Err:", err)
   }

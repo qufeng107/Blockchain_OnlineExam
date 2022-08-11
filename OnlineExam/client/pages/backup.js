@@ -143,8 +143,7 @@ export default class IndexPage extends React.Component {
     const tx = await getStudent(this.state.getStudentByID)
     console.log(tx)
     alert('Student ID : ' + tx.studentID
-      + '\nStudent Address : ' + tx.studentAddr
-      + '\nStudent Public key : ' + tx.studentPK)
+      + '\nStudent Information : ' + tx.studentInformation)
     event.preventDefault();
   }
 

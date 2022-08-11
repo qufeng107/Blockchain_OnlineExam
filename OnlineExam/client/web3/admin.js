@@ -8,13 +8,17 @@ import Key from "./artifacts/KeyManagement.json"
 
 
 export const checkOwnership = async () => {
-  
-  await ethereum.enable() // Prompt user to let our DApp access their addresses
-  const addresses = await eth.getAccounts() // Get user's ETH addresses
-  const university = await loadContract(University)
-  const ownerStatus = await university.isOwner.call(addresses[0])
+  try {
+    await ethereum.enable() // Prompt user to let our DApp access their addresses
+    const addresses = await eth.getAccounts() // Get user's ETH addresses
+    const university = await loadContract(University)
+    const ownerStatus = await university.isOwner.call(addresses[0])
 
-  return { isOwner: ownerStatus, accountAddress: addresses[0]}
+    return { isOwner: ownerStatus, accountAddress: addresses[0]}
+  } catch (err) {
+    console.error("Err:", err)
+    alert('Error')
+  }
 }
 
 export const addOwner = async (newOwner) => {
@@ -35,6 +39,7 @@ export const addOwner = async (newOwner) => {
     return result
   } catch (err) {
     console.error("Err:", err)
+    alert('Error')
   }
 }
 
@@ -139,5 +144,5 @@ export const getInitAddr = async () => {
   const universityAddr = await exam.showUniversityContractAddr.call()
   const studentAddr = await exam.showStudentContractAddr.call()
 
-  return { StoredUniversityManagementContractAddress: universityAddr, StoredStudentManagementContractAddress: studentAddr}
+  return { UniversityContractAddr: universityAddr, StudentContractAddr: studentAddr}
 }

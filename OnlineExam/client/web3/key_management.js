@@ -9,7 +9,7 @@ export const getDK = async (eid, studentAddr) => {
     const key = await loadContract(Key)
     const keyInfo = await key.getDK.call(eid, studentAddr)
   
-    return keyInfo
+    return {DK: keyInfo}
     
   } catch (err) {
     console.error("Err:", err)
