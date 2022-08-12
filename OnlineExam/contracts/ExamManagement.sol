@@ -6,7 +6,7 @@ pragma solidity >=0.7.0 <0.9.0;
 // SPDX-License-Identifier: MIT
 
 // interface of university management contract.
-interface UniversityInterface{
+interface UniversityInterfaceExam{
 
     // check if it's the university address.
     function isOwner(address owner) external view returns (bool);
@@ -40,6 +40,7 @@ contract ExamManagement{
         string endTime;
         string markerPK;
         string description;
+        string examPaperHash;
         student[] students;
     }
 
@@ -58,13 +59,16 @@ contract ExamManagement{
     // Emits an event when an exam is deleted, you can use this to update remote exam lists.
     event examDeleted(uint examID);
 
+    // Emits an event when an exam paper is updated, you can use this to update remote exam lists.
+    event examPaperUpdated(uint examID, string examPaperHash);
+
     constructor() {
         owner = msg.sender;
     }
 
     // modifier: only owner (university) address can call the 'onlyOwner' function.
     modifier onlyOwner() {
-        require(UniversityInterface(universityContract).isOwner(msg.sender) == true, "Ownerable: caller is not the owner");
+        require(UniversityInterfaceExam(universityContract).isOwner(msg.sender) == true, "Ownerable: caller is not the owner");
         _;
     }
 
@@ -156,6 +160,22 @@ contract ExamManagement{
     function findStudentPK(uint _studentID) private view returns(address, string memory){
 
         return StudentInterface(studentContract).getStudent(_studentID);
+    }
+
+// update or add exam
+    function updateExamPaper(uint _examID, string memory _examPaperHash) public onlyOwner{
+
+        // require the exam ID exists.
+        require(exams[_examID].isExist != false, "Exam does not exists!");
+
+        // require the student IDs to not be empty.
+        require(bytes(_examPaperHash).length > 0, "student public key is empty!");
+
+        // update the exam info to the storage.
+        exams[_examID].examPaperHash = _examPaperHash;
+
+        // emits exam updated event.
+        emit examPaperUpdated(_examID, exams[_examID].examPaperHash);
     }
 
     function setExpired(uint _examID, bool _isExpired) public onlyOwner{

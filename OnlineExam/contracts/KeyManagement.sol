@@ -6,7 +6,7 @@ pragma solidity >=0.7.0 <0.9.0;
 // SPDX-License-Identifier: MIT
 
 // interface of university management contract.
-interface UniversityInterface{
+interface UniversityInterfaceKey{
 
     // check if it's the university address.
     function isOwner(address owner) external view returns (bool);
@@ -37,7 +37,7 @@ contract KeyManagement{
 
     // modifier: only owner (university) address can call the 'onlyOwner' function.
     modifier onlyOwner() {
-        require(UniversityInterface(universityContract).isOwner(msg.sender) == true, "Ownerable: caller is not the owner");
+        require(UniversityInterfaceKey(universityContract).isOwner(msg.sender) == true, "Ownerable: caller is not the owner");
         _;
     }
 
