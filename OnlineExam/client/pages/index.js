@@ -1,6 +1,7 @@
 import React from 'react'
 import { useForm } from "react-hook-form";
 import { Center } from "../components/Layout"
+
 import Button from "../components/Button"
 
 import 
@@ -22,6 +23,7 @@ import
   getExamIDs, 
   updateExam,
   updateExamPaper,
+  updateAnswerSheet,
   setExpired, 
   deleteExam
 } from "../web3/exam_management"
@@ -60,6 +62,9 @@ export default class IndexPage extends React.Component {
       addExamDescription: '',
       addExamPaperID: 0,
       addExamPaperHash: '',
+      addAnswerSheetExamID: 0,
+      addAnswerSheetStudentID: 0,
+      addAnswerSheetHash: '',
       setExamStatusID: '',
       setExamStatus: false,
       deleteExamID: 0,
@@ -83,6 +88,7 @@ export default class IndexPage extends React.Component {
     this.getExamInfo = this.getExamInfo.bind(this);
     this.updateExamInfo = this.updateExamInfo.bind(this);    
     this.updateExamPaperHash = this.updateExamPaperHash.bind(this);
+    this.updateAnswerSheetHash = this.updateAnswerSheetHash.bind(this);
     this.deleteExamInfo = this.deleteExamInfo.bind(this);
     this.setExamStatus = this.setExamStatus.bind(this);
     this.getExamDK = this.getExamDK.bind(this);
@@ -186,7 +192,8 @@ export default class IndexPage extends React.Component {
     + '\nMarker public key : ' + tx.examInformation[4]
     + '\nDescription : ' + tx.examInformation[5]
     + '\nExam paper hash : ' + tx.examInformation[6]
-    + '\nInvited Students (address, public key): ' + tx.examInformation[7])
+    + '\nInvited students (address, public key): ' + tx.examInformation[7]
+    + '\nStudent answer sheets (Student ID, address, Answer sheet hash): ' + tx.examInformation[8])
     event.preventDefault();
   }
 
@@ -222,6 +229,13 @@ export default class IndexPage extends React.Component {
     event.preventDefault();
   }
   
+  async updateAnswerSheetHash(event) {
+    const tx = await updateAnswerSheet(this.state.addAnswerSheetExamID, 
+      this.state.addAnswerSheetStudentID, 
+      this.state.addAnswerSheetHash)
+    console.log(tx)
+    event.preventDefault();
+  }
 
   async setExamStatus(event) {
     const tx = await setExpired(this.state.setExamStatusID, this.state.setExamStatus)
@@ -571,8 +585,29 @@ export default class IndexPage extends React.Component {
         <button onClick={this.deleteExamDKs}>
           Delete
         </button>
-        <br/><br/>
+        <br/><br/><br/><br/><br/><br/>
 
+        <form>
+        Add/update answer sheet hash (only student himself/herself):<br/>
+          <label>
+          Exam ID:<br/>
+          <input name="addAnswerSheetExamID" type="text" value={this.state.addAnswerSheetExamID} onChange={this.handleChange} />
+          </label>
+          <br/>
+          <label>
+          Student ID:<br/>
+          <input name="addAnswerSheetStudentID" type="text" value={this.state.addAnswerSheetStudentID} onChange={this.handleChange} />
+          </label>
+          <br/>
+          <label>
+          Answer sheet hash:<br/>
+          <input name="addAnswerSheetHash" type="text" value={this.state.addAnswerSheetHash} onChange={this.handleChange} />
+          </label>
+        </form>
+        <button onClick={this.updateAnswerSheetHash}>
+          Update
+        </button>
+        <br/><br/>
       </Center>
 
     )
