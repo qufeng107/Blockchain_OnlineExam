@@ -32,6 +32,12 @@ contract ExamManagement{
         string studentPK;
     }
 
+    struct answerSheet{
+        uint studentID;
+        address studentAddr;
+        string answerSheetHash;
+    }
+
     // exam infomation.
     struct exam {
         bool isExist;
@@ -42,6 +48,7 @@ contract ExamManagement{
         string description;
         string examPaperHash;
         student[] students;
+        answerSheet[] answerSheets;
     }
 
     // map exam ID to exam details and invited students' information.
@@ -61,6 +68,8 @@ contract ExamManagement{
 
     // Emits an event when an exam paper is updated, you can use this to update remote exam lists.
     event examPaperUpdated(uint examID, string examPaperHash);
+
+    event answerSheetUpdated(uint examID, uint studentID, string answerSheetHash);
 
     constructor() {
         owner = msg.sender;
@@ -148,7 +157,7 @@ contract ExamManagement{
         uint length = _studentIDs.length;
         for (uint i = 0; i < length; i++) {
             student memory newStudent;
-            (newStudent.studentAddr, newStudent.studentPK) = findStudentPK(_studentIDs[i]);
+            (newStudent.studentAddr, newStudent.studentPK) = findStudent(_studentIDs[i]);
             exams[_examID].students.push(newStudent);
         }
 
@@ -157,25 +166,52 @@ contract ExamManagement{
     }
 
     // find student public key by ID
-    function findStudentPK(uint _studentID) private view returns(address, string memory){
+    function findStudent(uint _studentID) private view returns(address, string memory){
 
         return StudentInterface(studentContract).getStudent(_studentID);
     }
 
-// update or add exam
+// update or add exam paper hash
     function updateExamPaper(uint _examID, string memory _examPaperHash) public onlyOwner{
 
         // require the exam ID exists.
         require(exams[_examID].isExist != false, "Exam does not exists!");
 
-        // require the student IDs to not be empty.
+        // require the exam paper hash to not be empty.
         require(bytes(_examPaperHash).length > 0, "student public key is empty!");
 
-        // update the exam info to the storage.
+        // update the exam paper hash to the storage.
         exams[_examID].examPaperHash = _examPaperHash;
 
         // emits exam updated event.
         emit examPaperUpdated(_examID, exams[_examID].examPaperHash);
+    }
+
+    // update or add answer sheet hash
+    function updateAnswerSheet(uint _examID, uint _studentID, string memory _answerSheetHash) public{
+
+        // require the exam ID exists.
+        require(exams[_examID].isExist != false, "Exam does not exists!");
+        
+        // require the student ID to not be empty.
+        require(_studentID > 0, "student ID is empty!");
+
+        // require the answer sheet hash to not be empty.
+        require(bytes(_answerSheetHash).length > 0, "student public key is empty!");
+        
+        // require the answer sheet hash come from the correct student.
+        (address addr, string memory PK) = findStudent(_studentID);
+        require(addr == msg.sender, "student ID didn't match your address!");
+
+        // update the answer sheet hash to the storage.
+        answerSheet memory newAnswerSheet;
+        newAnswerSheet.studentID = _studentID;
+        newAnswerSheet.studentAddr = addr;
+        newAnswerSheet.answerSheetHash = _answerSheetHash;
+        exams[_examID].answerSheets.push(newAnswerSheet);
+
+        // emits exam updated event.
+        emit answerSheetUpdated(_examID, _studentID, _answerSheetHash);
     }
 
     function setExpired(uint _examID, bool _isExpired) public onlyOwner{
