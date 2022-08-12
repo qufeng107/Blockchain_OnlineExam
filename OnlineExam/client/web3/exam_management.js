@@ -10,7 +10,7 @@ export const getExam = async (eid) => {
     const examInfo = await exam.getExam.call(eid)
   
     return { examID: eid, examInformation: examInfo}
-    
+
   } catch (err) {
     console.error("Err:", err)
   }
@@ -51,6 +51,28 @@ export const updateExam = async (newExam) => {
   } catch (err) {
     console.error("Err:", err)
   }
+}
+
+export const updateExamPaper = async (eid, examPaperHash) => {
+    if (await checkOwnership() == false) return -1
+  
+    const exam = await loadContract(Exam)
+  
+    try {
+      await ethereum.enable()
+      const addresses = await eth.getAccounts()
+  
+      const result = await exam.updateExamPaper(
+        eid,  // exam id
+        examPaperHash,  // exam paper hash
+      {
+        from: addresses[0],
+      })
+  
+      return result
+    } catch (err) {
+      console.error("Err:", err)
+    }
 }
 
 export const setExpired = async (eid, status) => {

@@ -21,6 +21,7 @@ import
 { getExam, 
   getExamIDs, 
   updateExam,
+  updateExamPaper,
   setExpired, 
   deleteExam
 } from "../web3/exam_management"
@@ -57,6 +58,8 @@ export default class IndexPage extends React.Component {
       addExamEndTime: '',
       addExamMarkerPK: '',
       addExamDescription: '',
+      addExamPaperID: 0,
+      addExamPaperHash: '',
       setExamStatusID: '',
       setExamStatus: false,
       deleteExamID: 0,
@@ -78,7 +81,8 @@ export default class IndexPage extends React.Component {
     this.updateStudentInfo = this.updateStudentInfo.bind(this);
     this.deleteStudentInfo = this.deleteStudentInfo.bind(this);
     this.getExamInfo = this.getExamInfo.bind(this);
-    this.updateExamInfo = this.updateExamInfo.bind(this);
+    this.updateExamInfo = this.updateExamInfo.bind(this);    
+    this.updateExamPaperHash = this.updateExamPaperHash.bind(this);
     this.deleteExamInfo = this.deleteExamInfo.bind(this);
     this.setExamStatus = this.setExamStatus.bind(this);
     this.getExamDK = this.getExamDK.bind(this);
@@ -121,8 +125,7 @@ export default class IndexPage extends React.Component {
   }
 
   async init(event) {
-    // const tx = await initialization(this.state.uniContAddr,this.state.stuContAddr)
-    const tx = await initialization("0x57FC535EB3E0D21f8DDd0bcFba10D41e0504eDCF","0x1cfA115BeC8C530a0bd12771FccbBB4cc09Ba0A4")
+    const tx = await initialization(this.state.uniContAddr,this.state.stuContAddr)
     console.log(tx)
     event.preventDefault();
   }
@@ -182,7 +185,8 @@ export default class IndexPage extends React.Component {
     + '\nEnd time : ' + tx.examInformation[3]
     + '\nMarker public key : ' + tx.examInformation[4]
     + '\nDescription : ' + tx.examInformation[5]
-    + '\nInvited Students (address, public key): ' + tx.examInformation[6])
+    + '\nExam paper hash : ' + tx.examInformation[6]
+    + '\nInvited Students (address, public key): ' + tx.examInformation[7])
     event.preventDefault();
   }
 
@@ -211,6 +215,13 @@ export default class IndexPage extends React.Component {
     console.log(tx)
     event.preventDefault();
   }
+
+  async updateExamPaperHash(event) {
+    const tx = await updateExamPaper(this.state.addExamPaperID, this.state.addExamPaperHash)
+    console.log(tx)
+    event.preventDefault();
+  }
+  
 
   async setExamStatus(event) {
     const tx = await setExpired(this.state.setExamStatusID, this.state.setExamStatus)
@@ -351,7 +362,7 @@ export default class IndexPage extends React.Component {
         <button onClick={this.showInitAddr}>
           Get
         </button>
-        <br/><br/>
+        <br/><br/><br/><br/><br/><br/>
 
         <form>
         Show student information by ID<br/>
@@ -403,7 +414,7 @@ export default class IndexPage extends React.Component {
         <button onClick={this.deleteStudentInfo}>
           Delete
         </button>
-        <br/><br/>
+        <br/><br/><br/><br/><br/><br/>
 
         <form>
         Show exam information by ID:<br/>
@@ -461,6 +472,23 @@ export default class IndexPage extends React.Component {
         <br/><br/>
 
         <form>
+        Add/update exam paper hash (owner only):<br/>
+          <label>
+          Exam ID:<br/>
+          <input name="addExamPaperID" type="text" value={this.state.addExamPaperID} onChange={this.handleChange} />
+          </label>
+          <br/>
+          <label>
+          Exam paper hash:<br/>
+          <input name="addExamPaperHash" type="text" value={this.state.addExamPaperHash} onChange={this.handleChange} />
+          </label>
+        </form>
+        <button onClick={this.updateExamPaperHash}>
+          Update
+        </button>
+        <br/><br/>
+
+        <form>
         Set exam status (owner only):<br/>
           <label>
           Exam ID:<br/>
@@ -468,7 +496,7 @@ export default class IndexPage extends React.Component {
           </label>
           <br/>
           <label>
-          Is the exam expired?<br/>
+          Is the exam expired? (true or false)<br/>
           <input name="setExamStatus" type="text" value={this.state.setExamStatus} onChange={this.handleChange} />
           </label>
         </form>
@@ -487,7 +515,7 @@ export default class IndexPage extends React.Component {
         <button onClick={this.deleteExamInfo}>
           Delete<br/>
         </button>
-        <br/><br/>
+        <br/><br/><br/><br/><br/><br/>
 
         <form>
         Show exam paper decryption key by exam ID and student address:<br/>
