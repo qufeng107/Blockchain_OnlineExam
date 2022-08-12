@@ -18,6 +18,7 @@
     "@truffle/contract": "^4.5.20",
     "@truffle/interface-adapter": "^0.5.20",
     "babel-core": "^6.26.3",
+    "ipfs-http-client": "^57.0.3",
     "next": "^12.2.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
