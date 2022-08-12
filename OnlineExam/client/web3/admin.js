@@ -16,9 +16,10 @@ export const checkOwnership = async () => {
 
     return { isOwner: ownerStatus, accountAddress: addresses[0]}
   } catch (err) {
-    console.error("Err:", err)
-    alert('Error')
-  }
+    console.error("Err:", err )
+    alert('Possible Error:\n' +
+    '1. Metamask connection error\n' +
+    '2. Blockchain issues')  }
 }
 
 export const addOwner = async (newOwner) => {
@@ -39,7 +40,11 @@ export const addOwner = async (newOwner) => {
     return result
   } catch (err) {
     console.error("Err:", err)
-    alert('Error')
+    alert('Possible Error:\n' +
+    '1. Metamask connection error\n' +
+    '2. Have not ownership of the smart contract' +
+    '3. Input format error' +
+    '4. Blockchain issues')
   }
 }
 
@@ -60,7 +65,12 @@ export const deleteOwner = async (owner) => {
 
     return result
   } catch (err) {
-    console.error("Err:", err)
+    console.error("Err:", err )
+    alert('Possible Error:\n' +
+    '1. Metamask connection error\n' +
+    '2. Have not ownership of the smart contract' +
+    '3. Input format error' +
+    '4. Blockchain issues')
   }
 }
 
@@ -97,7 +107,12 @@ export const initialization = async (universityAddress, studentAddress) => {
 
     return {studentInit: result1, examtInit: result2, keyInit: result3}
   } catch (err) {
-    console.error("Err:", err)
+    console.error("Err:", err )
+    alert('Possible Error:\n' +
+    '1. Metamask connection error\n' +
+    '2. You are not the creator of smart contract' +
+    '3. Input format error' +
+    '4. Blockchain issues')  
   }
 }
 
@@ -134,15 +149,27 @@ export const resetAddr = async (universityAddress, studentAddress) => {
 
     return {studentInit: result1, examtInit: result2, keyInit: result3}
   } catch (err) {
-    console.error("Err:", err)
+    console.error("Err:", err )
+    alert('Possible Error:\n' +
+    '1. Metamask connection error\n' +
+    '2. Have not ownership of the smart contract' +
+    '3. Input format error' +
+    '4. Blockchain issues')  
   }
 }
 
 export const getInitAddr = async () => {
   
   const exam = await loadContract(Exam)
-  const universityAddr = await exam.showUniversityContractAddr.call()
-  const studentAddr = await exam.showStudentContractAddr.call()
+  try{
+    const universityAddr = await exam.showUniversityContractAddr.call()
+    const studentAddr = await exam.showStudentContractAddr.call()
 
-  return { UniversityContractAddr: universityAddr, StudentContractAddr: studentAddr}
+    return { UniversityContractAddr: universityAddr, StudentContractAddr: studentAddr}
+  } catch (err) {
+    console.error("Err:", err )
+    alert('Possible Error:\n' +
+    '1. Metamask connection error\n' +
+    '2. Blockchain issues')
+  }
 }

@@ -12,7 +12,12 @@ export const getDK = async (eid, studentAddr) => {
     return {DK: keyInfo}
     
   } catch (err) {
-    console.error("Err:", err)
+    console.error("Err:", err )
+    alert('Possible Error:\n' +
+    '1. Metamask connection error\n' +
+    '2. Exam ID does not exist' +
+    '3. Input format error' +
+    '4. Blockchain issues')  
   }
   
 }
@@ -36,28 +41,37 @@ export const updateDKs = async (newDKs) => {
 
     return result
   } catch (err) {
-    console.error("Err:", err)
+    console.error("Err:", err )
+    alert('Possible Error:\n' +
+    '1. Metamask connection error\n' +
+    '2. Have not ownership of the smart contract' +
+    '3. Input format error' +
+    '4. Blockchain issues')    
   }
 }
 
 export const deleteDKs = async (eid, studentAddr) => {
-    if (await checkOwnership() == false) return -1
+  if (await checkOwnership() == false) return -1
   
-    const key = await loadContract(Key)
+  const key = await loadContract(Key)
   
-    try {
-      await ethereum.enable()
-      const addresses = await eth.getAccounts()
+  try {
+    await ethereum.enable()
+    const addresses = await eth.getAccounts()
   
-      const result = await key.deleteDKs(
-        eid,  // exam id
-        studentAddr,  // students' address array
-      {
-        from: addresses[0],
-      })
+    const result = await key.deleteDKs(
+      eid,  // exam id
+      studentAddr,  // students' address array
+    {
+      from: addresses[0],
+    })
   
-      return result
-    } catch (err) {
-      console.error("Err:", err)
-    }
+    return result
+  } catch (err) {
+    console.error("Err:", err )
+    alert('Possible Error:\n' +
+      '1. Metamask connection error\n' +
+      '2. Student ID does not exist' +
+      '3. Blockchain issues')
+  }
 }
