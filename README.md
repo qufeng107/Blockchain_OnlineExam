@@ -11,9 +11,9 @@ Blockchain technology can play an important role in addressing the problems of e
 
 ## Implementation
 
-Backend - Ethereum / Solidity [Backend working folder: contracts]
+Backend - Ethereum / Solidity [Backend working folder: OnlineExam/contracts]
 
-Frontend - React / javaScript [Frontend working folder: client]
+Frontend - React / javaScript [Frontend working folder: OnlineExam/client]
 
 Testing environment - Truffle / Ganache-cli
 
