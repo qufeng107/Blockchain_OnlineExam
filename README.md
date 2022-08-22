@@ -6,5 +6,9 @@ Blockchain technology can play an important role in addressing the problems of e
 
 
 Implementation:
+
 Backend - Ethereum / Solidity
+
 Frontend - React / javaScript
+
+Project status: Ongoing
