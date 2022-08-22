@@ -4,3 +4,7 @@ Nowadays, the need of online examination is sharply growing due to the popularit
 
 Blockchain technology can play an important role in addressing the problems of examinee authentication, exam data security and availability. This research provides an exciting opportunity to advance reliability of online examination based on smart contracts and Ethereum. The contributions of this dissertation can be summarized as follows: Implementation of a decentralized online examination application which provides examinee authentication and secured exam paper delivery. 
 
+
+Implementation:
+Backend - Ethereum / Solidity
+Frontend - React / javaScript
