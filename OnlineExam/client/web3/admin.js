@@ -42,8 +42,8 @@ export const addOwner = async (newOwner) => {
     console.error("Err:", err)
     alert('Possible Error:\n' +
     '1. Metamask connection error\n' +
-    '2. Have not ownership of the smart contract' +
-    '3. Input format error' +
+    '2. Have not ownership of the smart contract\n' +
+    '3. Input format error\n' +
     '4. Blockchain issues')
   }
 }
@@ -68,8 +68,8 @@ export const deleteOwner = async (owner) => {
     console.error("Err:", err )
     alert('Possible Error:\n' +
     '1. Metamask connection error\n' +
-    '2. Have not ownership of the smart contract' +
-    '3. Input format error' +
+    '2. Have not ownership of the smart contract\n' +
+    '3. Input format error\n' +
     '4. Blockchain issues')
   }
 }
@@ -110,8 +110,8 @@ export const initialization = async (universityAddress, studentAddress) => {
     console.error("Err:", err )
     alert('Possible Error:\n' +
     '1. Metamask connection error\n' +
-    '2. You are not the creator of smart contract' +
-    '3. Input format error' +
+    '2. You are not the creator of smart contract\n' +
+    '3. Input format error\n' +
     '4. Blockchain issues')  
   }
 }
@@ -152,8 +152,8 @@ export const resetAddr = async (universityAddress, studentAddress) => {
     console.error("Err:", err )
     alert('Possible Error:\n' +
     '1. Metamask connection error\n' +
-    '2. Have not ownership of the smart contract' +
-    '3. Input format error' +
+    '2. Have not ownership of the smart contract\n' +
+    '3. Input format error\n' +
     '4. Blockchain issues')  
   }
 }

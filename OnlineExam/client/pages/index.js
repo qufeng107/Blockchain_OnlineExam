@@ -65,6 +65,7 @@ export default class IndexPage extends React.Component {
       addAnswerSheetExamID: 0,
       addAnswerSheetStudentID: 0,
       addAnswerSheetHash: '',
+      addAnswerSheetDescription: '',
       setExamStatusID: '',
       setExamStatus: false,
       deleteExamID: 0,
@@ -192,8 +193,8 @@ export default class IndexPage extends React.Component {
     + '\nMarker public key : ' + tx.examInformation[4]
     + '\nDescription : ' + tx.examInformation[5]
     + '\nExam paper hash : ' + tx.examInformation[6]
-    + '\nInvited students (address, public key): ' + tx.examInformation[7]
-    + '\nStudent answer sheets (Student ID, address, Answer sheet hash): ' + tx.examInformation[8])
+    + '\nInvited students (address, public key):\n' + tx.examInformation[7]
+    + '\nStudent answer sheets (Student ID, address, Description, Answer sheet hash):\n' + tx.examInformation[8])
     event.preventDefault();
   }
 
@@ -232,6 +233,7 @@ export default class IndexPage extends React.Component {
   async updateAnswerSheetHash(event) {
     const tx = await updateAnswerSheet(this.state.addAnswerSheetExamID, 
       this.state.addAnswerSheetStudentID, 
+      this.state.addAnswerSheetDescription,
       this.state.addAnswerSheetHash)
     console.log(tx)
     event.preventDefault();
@@ -602,6 +604,11 @@ export default class IndexPage extends React.Component {
           <label>
           Answer sheet hash:<br/>
           <input name="addAnswerSheetHash" type="text" value={this.state.addAnswerSheetHash} onChange={this.handleChange} />
+          </label>
+          <br/>
+          <label>
+          Answer sheet description (any cases):<br/>
+          <input name="addAnswerSheetDescription" type="text" value={this.state.addAnswerSheetDescription} onChange={this.handleChange} />
           </label>
         </form>
         <button onClick={this.updateAnswerSheetHash}>

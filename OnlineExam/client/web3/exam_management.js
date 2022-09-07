@@ -15,7 +15,7 @@ export const getExam = async (eid) => {
     console.error("Err:", err )
     alert('Possible Error:\n' +
     '1. Metamask connection error\n' +
-    '2. Exam ID does not exist' +
+    '2. Exam ID does not exist\n' +
     '3. Blockchain issues')  
   }
   
@@ -63,8 +63,8 @@ export const updateExam = async (newExam) => {
     console.error("Err:", err )
     alert('Possible Error:\n' +
     '1. Metamask connection error\n' +
-    '2. Have not ownership of the smart contract' +
-    '3. Input format error' +
+    '2. Have not ownership of the smart contract\n' +
+    '3. Input format error\n' +
     '4. Blockchain issues')  
   }
 }
@@ -90,14 +90,14 @@ export const updateExamPaper = async (eid, examPaperHash) => {
     console.error("Err:", err )
     alert('Possible Error:\n' +
     '1. Metamask connection error\n' +
-    '2. Have not ownership of the smart contract' +
-    '3. Input format error' +
-    '4. Exam ID does not exist' +
+    '2. Have not ownership of the smart contract\n' +
+    '3. Input format error\n' +
+    '4. Exam ID does not exist\n' +
     '5. Blockchain issues')  
   }
 }
 
-export const updateAnswerSheet = async (eid, sid, answerSheetHash) => {  
+export const updateAnswerSheet = async (eid, sid, answerSheetHash, answerSheetDescription) => {  
   const exam = await loadContract(Exam)
   
   try {
@@ -107,7 +107,8 @@ export const updateAnswerSheet = async (eid, sid, answerSheetHash) => {
     const result = await exam.updateAnswerSheet(
       eid,  // exam id
       sid,  // student id
-      answerSheetHash,  // exam paper hash
+      answerSheetHash,  // answer sheet hash
+      answerSheetDescription, // answer sheet description
     {
       from: addresses[0],
     })
@@ -117,9 +118,9 @@ export const updateAnswerSheet = async (eid, sid, answerSheetHash) => {
     console.error("Err:", err )
     alert('Possible Error:\n' +
     '1. Metamask connection error\n' +
-    '2. Input format error' +
-    '3. Exam ID does not exist' +
-    '4. Student ID does not match your address' +
+    '2. Input format error\n' +
+    '3. Exam ID does not exist\n' +
+    '4. Student ID does not match your address\n' +
     '5. Blockchain issues')  
   }
 }
@@ -145,9 +146,9 @@ export const setExpired = async (eid, status) => {
     console.error("Err:", err )
     alert('Possible Error:\n' +
     '1. Metamask connection error\n' +
-    '2. Have not ownership of the smart contract' +
-    '3. Input format error' +
-    '4. Exam ID does not exist' +
+    '2. Have not ownership of the smart contract\n' +
+    '3. Input format error\n' +
+    '4. Exam ID does not exist\n' +
     '5. Blockchain issues')  
   }
 }
@@ -172,8 +173,8 @@ export const deleteExam = async (eid) => {
     console.error("Err:", err )
     alert('Possible Error:\n' +
     '1. Metamask connection error\n' +
-    '2. Have not ownership of the smart contract' +
-    '3. Exam ID does not exist' +
+    '2. Have not ownership of the smart contract\n' +
+    '3. Exam ID does not exist\n' +
     '4. Blockchain issues')  
   }
 }

@@ -36,6 +36,7 @@ contract ExamManagement{
         uint studentID;
         address studentAddr;
         string answerSheetHash;
+        string description;
     }
 
     // exam infomation.
@@ -188,7 +189,7 @@ contract ExamManagement{
     }
 
     // update or add answer sheet hash
-    function updateAnswerSheet(uint _examID, uint _studentID, string memory _answerSheetHash) public{
+    function updateAnswerSheet(uint _examID, uint _studentID, string memory _answerSheetHash, string memory _description) public{
 
         // require the exam ID exists.
         require(exams[_examID].isExist != false, "Exam does not exists!");
@@ -199,7 +200,7 @@ contract ExamManagement{
         // require the answer sheet hash to not be empty.
         require(bytes(_answerSheetHash).length > 0, "student public key is empty!");
         
-        // require the answer sheet hash come from the correct student.
+        // access control: require the answer sheet hash come from the correct student.
         (address addr, string memory PK) = findStudent(_studentID);
         require(addr == msg.sender, "student ID didn't match your address!");
 
@@ -208,6 +209,14 @@ contract ExamManagement{
         newAnswerSheet.studentID = _studentID;
         newAnswerSheet.studentAddr = addr;
         newAnswerSheet.answerSheetHash = _answerSheetHash;
+        
+        if(bytes(_description).length > 0){
+            newAnswerSheet.description = _description;
+        }
+        else{
+            newAnswerSheet.description = "";
+        }
+
         exams[_examID].answerSheets.push(newAnswerSheet);
 
         // emits exam updated event.

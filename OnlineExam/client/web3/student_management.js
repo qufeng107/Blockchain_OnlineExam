@@ -14,7 +14,7 @@ export const getStudent = async (sid) => {
     console.error("Err:", err )
     alert('Possible Error:\n' +
     '1. Metamask connection error\n' +
-    '2. Student ID does not exist' +
+    '2. Student ID does not exist\n' +
     '3. Blockchain issues')
   }
 
@@ -59,8 +59,8 @@ export const updateStudent = async (newStudent) => {
     console.error("Err:", err )
     alert('Possible Error:\n' +
     '1. Metamask connection error\n' +
-    '2. Have not ownership of the smart contract' +
-    '3. Input format error' +
+    '2. Have not ownership of the smart contract\n' +
+    '3. Input format error\n' +
     '4. Blockchain issues')  
   }
 }
@@ -85,7 +85,7 @@ export const deleteStudent = async (sid) => {
     console.error("Err:", err )
     alert('Possible Error:\n' +
       '1. Metamask connection error\n' +
-      '2. Student ID does not exist' +
+      '2. Student ID does not exist\n' +
       '3. Blockchain issues')
   }
 }
